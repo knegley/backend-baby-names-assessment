@@ -81,12 +81,14 @@ def extract_names(filename):
     # print(pattern.match(lines[300]))
     # print(test)
 
-    baby_list=list(starmap(name_assembler,baby_dict.items()))
+    baby_list=(starmap(name_assembler,baby_dict.items()))
 
     
 
     names=[year,*baby_list]
-    print(names)
+    # print(names)
+    for name in names:
+        print(name)
     return names
 
 with open("tests/baby1990.html.summary") as summary:
@@ -117,6 +119,8 @@ def create_parser():
 def main(args):
     # Create a command line parser object with parsing rules
     parser = create_parser()
+
+
     # Run the parser to collect command line arguments into a
     # NAMESPACE called 'ns'
     ns = parser.parse_args(args)
@@ -127,16 +131,40 @@ def main(args):
 
     file_list = ns.files
 
+    print(ns)
+
+    print(ns.files)
+
     # option flag
     create_summary = ns.summaryfile
-
+    print(create_summary)
     # For each filename, call `extract_names()` with that single file.
     # Format the resulting list as a vertical list (separated by newline \n).
     # Use the create_summary flag to decide whether to print the list
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
     # +++your code here+++
+    if create_parser:
+        print("yes it's being called")
+        try: 
+            for file in file_list:
+                with open(file, "x") as f:
+                    for item in extract_names(file):
+                        f.write("hello people")
+        except FileExistsError:
+            print(f"The file: {file} exists. Would you like to override this file? /n type yes or no")
+            response = input()
+            print(f"your response: {response}")
+            if response=="yes":
+                f.write('hello people')
+                print(f"overwrited {file}")
+            else: print("closing file without overwriting")
+                
 
+
+
+
+    
 
 if __name__ == '__main__':
     main(sys.argv[1:])
