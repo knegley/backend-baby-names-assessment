@@ -36,6 +36,7 @@ import re
 import argparse
 from itertools import starmap
 
+
 def extract_names(filename):
     """
     Given a single file name for babyXXXX.html, returns a
@@ -44,35 +45,38 @@ def extract_names(filename):
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
     test = []
-    baby_dict={}
-    year_pattern=re.compile(r"([\d]{4})")
-    year_match=year_pattern.search(filename)
-    
-    year=filename[year_match.start():year_match.end()]
+    baby_dict = {}
+    year_pattern = re.compile(r"([\d]{4})")
+    year_match = year_pattern.search(filename)
+
+    year = filename[year_match.start():year_match.end()]
     print(year)
-    names = [year]
+    names = []
+
     # baby_dict["year"]=year
-    
+
     # +++your code here+++
-    pattern=re.compile(r".+<td>(?P<rank>[\d]+)</td><td>(?P<boy_name>[\w]+)</td><td>(?P<girl_name>[\w]+).{5}")
+    pattern = re.compile(
+        r".+<td>(?P<rank>[\d]+)</td><td>(?P<boy_name>[\w]+)</td><td>(?P<girl_name>[\w]+).{5}")
     with open(filename) as f:
-        lines=f.readlines()
-        
+        lines = f.readlines()
+
         # for line in lines:
         #     print(pattern.match(line))
         #     # if result:
         #     #     print("match exists")
     for line in lines:
         if pattern.match(line):
-            match=pattern.match(line)
+            match = pattern.match(line)
             # print(match.groups())
             # print(pattern.match(line).group("rank"))
-            baby_dict[match.group("rank")]=match.group("boy_name", "girl_name")
+            baby_dict[match.group("rank")] = match.group(
+                "boy_name", "girl_name")
 
-    def name_assembler(rank,babies):
+    def name_assembler(rank, babies):
 
-        return f"rank:{rank} boy: {babies[0]} girl: {babies[1]}\n"  
-    # print(baby_dict)  
+        return f"rank:{rank} boy: {babies[0]} girl: {babies[1]}\n"
+    # print(baby_dict)
     # print(baby_dict["1"][0])
     # for line in lines:
     #     if "<td>" in line:
@@ -81,25 +85,22 @@ def extract_names(filename):
     # print(pattern.match(lines[300]))
     # print(test)
 
-    baby_list=(starmap(name_assembler,baby_dict.items()))
+    baby_list = (starmap(name_assembler, baby_dict.items()))
 
-    
-
-    names=[year,*baby_list]
+    names = [year+"\n", *baby_list]
     # print(names)
     for name in names:
         print(name)
     return names
 
-with open("tests/baby1990.html.summary") as summary:
-    summarylines= summary.readlines()
 
-print(summarylines[0:4])
-for line in summarylines[0:4]:
-    print(line)
+# with open("tests/baby1990.html.summary") as summary:
+#     summarylines = summary.readlines()
 
+# print(summarylines[0:4])
+# for line in summarylines[0:4]:
+#     print(line)
 
-extract_names("baby1992.html")
 
 def create_parser():
     """Create a command line parser object with 2 argument definitions."""
@@ -113,13 +114,10 @@ def create_parser():
     parser.add_argument('files', help='filename(s) to parse', nargs='+')
     return parser
 
-    
-
 
 def main(args):
     # Create a command line parser object with parsing rules
     parser = create_parser()
-
 
     # Run the parser to collect command line arguments into a
     # NAMESPACE called 'ns'
@@ -137,34 +135,42 @@ def main(args):
 
     # option flag
     create_summary = ns.summaryfile
-    print(create_summary)
+    # print(create_summary)
     # For each filename, call `extract_names()` with that single file.
     # Format the resulting list as a vertical list (separated by newline \n).
     # Use the create_summary flag to decide whether to print the list
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
     # +++your code here+++
-    if create_parser:
-        print("yes it's being called")
-        try: 
-            for file in file_list:
+    if create_summary:
+        # print("yes it's being called")
+        for file in file_list:
+            try:
                 with open(file, "x") as f:
                     for item in extract_names(file):
-                        f.write("hello people")
-        except FileExistsError:
-            print(f"The file: {file} exists. Would you like to override this file? /n type yes or no")
-            response = input()
-            print(f"your response: {response}")
-            if response=="yes":
-                f.write('hello people')
-                print(f"overwrited {file}")
-            else: print("closing file without overwriting")
-                
+                        f.write(item)
+            except FileExistsError:
+                print(
+                    f"The file: {file} exists. Would you like to override this file?\n\ttype yes or no")
+                response = input()
+                # print(f"your response: {response}")
+                if response == "yes":
+                    with open(file+".summary", "w") as overwriteFile:
+                        for item in extract_names(file):
+                            overwriteFile.write(item)
+                    print(f"overwrited {file}")
+                    extract_names(file)
+                else:
+                    print("closing file without overwriting")
+    else:
+        print("no option flag used")
+        # for file in file_list:
+        #     print(file)
+        #     extract_names(file)
+        for file in file_list:
+            with open(file+".summary") as read_only_file:
+                print(read_only_file.read())
 
-
-
-
-    
 
 if __name__ == '__main__':
     main(sys.argv[1:])
