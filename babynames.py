@@ -34,7 +34,7 @@ Suggested milestones for incremental development:
 import sys
 import re
 import argparse
-
+from itertools import starmap
 
 def extract_names(filename):
     """
@@ -43,10 +43,61 @@ def extract_names(filename):
     the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
-    names = []
+    test = []
+    baby_dict={}
+    year_pattern=re.compile(r"([\d]{4})")
+    year_match=year_pattern.search(filename)
+    
+    year=filename[year_match.start():year_match.end()]
+    print(year)
+    names = [year]
+    # baby_dict["year"]=year
+    
     # +++your code here+++
+    pattern=re.compile(r".+<td>(?P<rank>[\d]+)</td><td>(?P<boy_name>[\w]+)</td><td>(?P<girl_name>[\w]+).{5}")
+    with open(filename) as f:
+        lines=f.readlines()
+        
+        # for line in lines:
+        #     print(pattern.match(line))
+        #     # if result:
+        #     #     print("match exists")
+    for line in lines:
+        if pattern.match(line):
+            match=pattern.match(line)
+            # print(match.groups())
+            # print(pattern.match(line).group("rank"))
+            baby_dict[match.group("rank")]=match.group("boy_name", "girl_name")
+
+    def name_assembler(rank,babies):
+
+        return f"rank:{rank} boy: {babies[0]} girl: {babies[1]}\n"  
+    # print(baby_dict)  
+    # print(baby_dict["1"][0])
+    # for line in lines:
+    #     if "<td>" in line:
+    #         test.append(line)
+    # print(lines[300])
+    # print(pattern.match(lines[300]))
+    # print(test)
+
+    baby_list=list(starmap(name_assembler,baby_dict.items()))
+
+    
+
+    names=[year,*baby_list]
+    print(names)
     return names
 
+with open("tests/baby1990.html.summary") as summary:
+    summarylines= summary.readlines()
+
+print(summarylines[0:4])
+for line in summarylines[0:4]:
+    print(line)
+
+
+extract_names("baby1992.html")
 
 def create_parser():
     """Create a command line parser object with 2 argument definitions."""
@@ -59,6 +110,8 @@ def create_parser():
     # e.g. 'baby*.html' will work.
     parser.add_argument('files', help='filename(s) to parse', nargs='+')
     return parser
+
+    
 
 
 def main(args):
