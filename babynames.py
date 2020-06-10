@@ -171,8 +171,8 @@ def main(args):
                     with open(file+".summary", "w") as overwriteFile:
                         for item in extract_names(file):
                             overwriteFile.write(item)
-                    print(f"overwrited {file}")
-                    extract_names(file)
+                    print(f"created/overwrote {file}")
+                    # print(extract_names(file))
                 else:
                     print("closing file without overwriting")
     else:
@@ -180,9 +180,12 @@ def main(args):
         # for file in file_list:
         #     print(file)
         #     extract_names(file)
-        for file in file_list:
-            with open(file+".summary") as read_only_file:
-                print(read_only_file.read())
+        try:
+            for file in file_list:
+                with open(file+".summary") as read_only_file:
+                    print(read_only_file.read())
+        except FileNotFoundError:
+            print(extract_names(file))
 
 
 if __name__ == '__main__':
