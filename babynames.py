@@ -78,7 +78,7 @@ def extract_names(filename):
     girls = [f"{value[1]} {key}" for key, value in baby_dict.items()]
     children = [year, *boys, *girls]
     sorted_children = sorted(children)
-    print("\n".join(sorted_children))
+    # print("\n".join(sorted_children))
     return "\n".join(sorted_children)
     ####
 
