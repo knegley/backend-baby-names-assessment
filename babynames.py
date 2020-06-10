@@ -73,9 +73,20 @@ def extract_names(filename):
             baby_dict[match.group("rank")] = match.group(
                 "boy_name", "girl_name")
 
-    def name_assembler(rank, babies):
+    # updated code to reflect proper printing
+    boys = [f"{value[0]} {key}" for key, value in baby_dict.items()]
+    girls = [f"{value[1]} {key}" for key, value in baby_dict.items()]
+    children = [year, *boys, *girls]
+    sorted_children = sorted(children)
+    print("\n".join(sorted_children))
+    return "\n".join(sorted_children)
+    ####
 
-        return f"rank:{rank} boy: {babies[0]} girl: {babies[1]}\n"
+    # had to comment name assembler because of having to order list properly
+    # def name_assembler(rank, babies):
+
+    #   return f"rank:{rank} boy: {babies[0]} girl: {babies[1]}\n"
+    ##########################################################
     # print(baby_dict)
     # print(baby_dict["1"][0])
     # for line in lines:
@@ -85,13 +96,15 @@ def extract_names(filename):
     # print(pattern.match(lines[300]))
     # print(test)
 
-    baby_list = (starmap(name_assembler, baby_dict.items()))
+   # commented this out baby_list = (starmap(name_assembler, baby_dict.items()))
 
-    names = [year+"\n", *baby_list]
+    # commented this out with the baby list variable and name assembler names = [year+"\n", *baby_list]
     # print(names)
-    for name in names:
-        print(name)
-    return names
+    # for name in names:
+    #     print(name)
+
+
+# extract_names("baby2008.html")
 
 
 # with open("tests/baby1990.html.summary") as summary:
@@ -151,7 +164,7 @@ def main(args):
                         f.write(item)
             except FileExistsError:
                 print(
-                    f"The file: {file} exists. Would you like to override this file?\n\ttype yes or no")
+                    f"The file: {file} exists. Would you like to create a summary of this file?\n\ttype yes or no")
                 response = input()
                 # print(f"your response: {response}")
                 if response == "yes":
